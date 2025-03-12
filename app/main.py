@@ -1,5 +1,5 @@
 class Person:
-    people: dict[str, "Person"] = {}
+    people = {}
 
     def __init__(self, name: str, age: int) -> None:
         self.name = name
@@ -8,16 +8,19 @@ class Person:
 
 
 def create_person_list(people: list) -> list:
-    persons: list[Person] = []
-    for person_dict in people:
-        name = person_dict["name"]
-        age = person_dict["age"]
-        persons.append(Person(name, age))
-    for person_dict in people:
-        item = Person.people[person_dict["name"]]
-        if "wife" in person_dict and person_dict["wife"] is not None:
-            item.wife = Person.people[person_dict["wife"]]
-        if "husband" in person_dict and person_dict["husband"] is not None:
-            item.husband = Person.people[person_dict["husband"]]
+    persons = []
+    for person in people:
+        item_person = Person(person["name"], person["age"])
+        if person.get("wife"):
+            wife = Person.people.get(person["wife"])
+            if wife:
+                item_person.wife = wife
+                wife.husband = item_person
+        if person.get("husband"):
+            husband = Person.people.get(person["husband"])
+            if husband:
+                item_person.husband = husband
+                husband.wife = item_person
+        persons.append(item_person)
 
     return persons
